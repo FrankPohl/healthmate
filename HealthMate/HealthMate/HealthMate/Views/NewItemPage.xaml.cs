@@ -10,7 +10,7 @@ namespace HealthMate.Views
 {
     public partial class NewItemPage : ContentPage
     {
-        public Item Item { get; set; }
+        public MeasuredItem Item { get; set; }
 
         public NewItemPage()
         {

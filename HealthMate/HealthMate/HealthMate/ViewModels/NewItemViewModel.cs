@@ -49,11 +49,10 @@ namespace HealthMate.ViewModels
 
         private async void OnSave()
         {
-            Item newItem = new Item()
+            MeasuredItem newItem = new MeasuredItem()
             {
-                Id = Guid.NewGuid().ToString(),
-                Text = Text,
-                Description = Description
+                DiaValue = 10,
+                MeasurementType = Intent.Pulse
             };
 
             await DataStore.AddItemAsync(newItem);

@@ -1,0 +1,28 @@
+{
+    "name": "Publsihed HelathMate",
+    "description": "",
+    "services": [
+        {
+            "type": "endpoint",
+            "name": "https://healthmatebothackathon.azurewebsites.net/api/messages",
+            "id": "467f02c0-8f4f-11ec-aed2-1b61760c0a4c",
+            "appId": " 57104f67-c89f-4a62-b51b-bd427f2d6793",
+            "appPassword": "",
+            "endpoint": "https://healthmatebothackathon.azurewebsites.net/api/messages"
+        },
+        {
+            "type": "luis",
+            "name": "HealthMate",
+            "appId": "8c167a33-c706-4896-a66e-fa556867744a",
+            "version": "0.1",
+            "region": "westus",
+            "authoringKey": "650478e5e576450784c4aca4e17ff111",
+            "subscriptionKey": "7cd0ea86-0645-4a17-9801-f0d562462137",
+            "id": "163"
+        }
+    ],
+    "padlock": "",
+    "version": "2.0",
+    "path": "C:\\Users\\frank\\Workspaces\\healthmate\\HealthMate\\HealthMateBot\\Publsihed HelathMate.bot",
+    "overrides": null
+}

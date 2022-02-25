@@ -17,9 +17,10 @@ namespace HealthMateBot.CognitiveModels
         public string AlteredText;
         public enum Intent
         {
-            BookFlight,
+            BloodPressure,
+            Glucose,
+            Pulse,
             Cancel,
-            GetWeather,
             None
         };
         public Dictionary<Intent, IntentScore> Intents;

@@ -10,20 +10,19 @@ namespace HealthMate.ViewModels
 {
     public class ItemsViewModel : BaseViewModel
     {
-        private Item _selectedItem;
+        private MeasuredItem _selectedItem;
 
-        public ObservableCollection<Item> Items { get; }
+        public ObservableCollection<ItemsViewModel> Items { get; }
         public Command LoadItemsCommand { get; }
         public Command AddItemCommand { get; }
-        public Command<Item> ItemTapped { get; }
+        public Command<ItemsViewModel> ItemTapped { get; }
 
         public ItemsViewModel()
         {
-            Title = "Browse";
-            Items = new ObservableCollection<Item>();
+            Items = new ObservableCollection<ItemsViewModel>();
             LoadItemsCommand = new Command(async () => await ExecuteLoadItemsCommand());
 
-            ItemTapped = new Command<Item>(OnItemSelected);
+        //    ItemTapped = new Command<ItemsViewModel>(OnItemSelected);
 
             AddItemCommand = new Command(OnAddItem);
         }
@@ -38,7 +37,7 @@ namespace HealthMate.ViewModels
                 var items = await DataStore.GetItemsAsync(true);
                 foreach (var item in items)
                 {
-                    Items.Add(item);
+ //                   Items.Add(item);
                 }
             }
             catch (Exception ex)
@@ -57,7 +56,7 @@ namespace HealthMate.ViewModels
             SelectedItem = null;
         }
 
-        public Item SelectedItem
+        public MeasuredItem SelectedItem
         {
             get => _selectedItem;
             set
@@ -72,13 +71,13 @@ namespace HealthMate.ViewModels
             await Shell.Current.GoToAsync(nameof(NewItemPage));
         }
 
-        async void OnItemSelected(Item item)
+        async void OnItemSelected(MeasuredItem item)
         {
             if (item == null)
                 return;
 
             // This will push the ItemDetailPage onto the navigation stack
-            await Shell.Current.GoToAsync($"{nameof(ItemDetailPage)}?{nameof(ItemDetailViewModel.ItemId)}={item.Id}");
+            await Shell.Current.GoToAsync($"{nameof(ItemDetailPage)}?{nameof(MessageDetailViewModel.Message)}={item.MeasurementType}");
         }
     }
 }

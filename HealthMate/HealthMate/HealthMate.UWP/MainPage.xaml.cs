@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HealthMate.UWP.Services;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -23,5 +24,6 @@ namespace HealthMate.UWP
 
             LoadApplication(new HealthMate.App());
         }
+
     }
 }

@@ -2,7 +2,7 @@
   "Text": "flight from madrid to chicago",
   "AlteredText": null,
   "Intents": {
-    "BookFlight": {
+    "BloodPressure": {
       "score": 0.8837919
     }
   },

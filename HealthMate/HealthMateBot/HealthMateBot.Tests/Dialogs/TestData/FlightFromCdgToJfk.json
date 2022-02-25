@@ -2,7 +2,7 @@
   "Text": "flight from cdg to jfk",
   "AlteredText": null,
   "Intents": {
-    "BookFlight": {
+    "BloodPressure": {
       "score": 0.712058365
     }
   },

@@ -10,7 +10,7 @@ namespace HealthMate.ViewModels
 {
     public class BaseViewModel : INotifyPropertyChanged
     {
-        public IDataStore<Item> DataStore => DependencyService.Get<IDataStore<Item>>();
+        public IDataStore<MeasuredItem> DataStore => DependencyService.Get<IDataStore<MeasuredItem>>();
 
         bool isBusy = false;
         public bool IsBusy

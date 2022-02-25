@@ -87,8 +87,8 @@ namespace HealthMateBot.Tests.Dialogs
         }
 
         [Theory]
-        [InlineData("I want to book a flight", "BookFlight", "BookingDialog mock invoked", "I have you booked to Seattle from New York")]
-        [InlineData("What's the weather like?", "GetWeather", "TODO: get weather flow here", null)]
+        [InlineData("I want to book a flight", "BloodPressure", "BookingDialog mock invoked", "I have you booked to Seattle from New York")]
+        [InlineData("What's the weather like?", "Pulse", "TODO: get weather flow here", null)]
         [InlineData("bananas", "None", "Sorry, I didn't get that. Please try asking in a different way (intent was None)", null)]
         public async Task TaskSelector(string utterance, string intent, string invokedDialogResponse, string taskConfirmationMessage)
         {

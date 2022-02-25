@@ -1,0 +1,8 @@
+{
+  "$kind": "Microsoft.MultiLanguageRecognizer",
+  "id": "LUIS_HealthMate",
+  "recognizers": {
+    "en-us": "HealthMate.en-us.lu",
+    "": "HealthMate.en-us.lu"
+  }
+}

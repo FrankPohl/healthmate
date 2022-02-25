@@ -1,4 +1,6 @@
-﻿using System;
+﻿using HealthMate.Services;
+using HealthMate.UWP.Services;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -45,6 +47,7 @@ namespace HealthMate.UWP
                 this.DebugSettings.EnableFrameRateCounter = true;
             }
 #endif
+            Xamarin.Forms.DependencyService.Register<IMicService, MicService>();
 
             Frame rootFrame = Window.Current.Content as Frame;
 

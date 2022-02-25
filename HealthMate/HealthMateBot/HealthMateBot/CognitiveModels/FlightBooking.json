@@ -7,13 +7,16 @@
   "tokenizerVersion": "1.0.0",
   "intents": [
     {
-      "name": "BookFlight"
+      "name": "BloodPressure"
+    },
+    {
+      "name": "Glucose"
+    },
+    {
+      "name": "Pulse"
     },
     {
       "name": "Cancel"
-    },
-    {
-      "name": "GetWeather"
     },
     {
       "name": "None"

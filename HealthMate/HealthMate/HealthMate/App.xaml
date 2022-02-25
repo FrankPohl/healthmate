@@ -1,15 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<Application xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="HealthMate.App">
+<Application
+    x:Class="HealthMate.App"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:HealthMate.Helpers">
     <!--
         Define global resources and styles here, that apply to all pages in your app.
     -->
     <Application.Resources>
         <ResourceDictionary>
             <Color x:Key="Primary">#2196F3</Color>
+            <x:Double x:Key="SelectedFontSize">11</x:Double>
             <Style TargetType="Button">
-                <Setter Property="TextColor" Value="White"></Setter>
+                <Setter Property="TextColor" Value="White" />
                 <Setter Property="VisualStateManager.VisualStateGroups">
                     <VisualStateGroupList>
                         <VisualStateGroup x:Name="CommonStates">
@@ -27,6 +30,36 @@
                     </VisualStateGroupList>
                 </Setter>
             </Style>
-        </ResourceDictionary>        
+            <DataTemplate x:Key="UserTemplate">
+                <ViewCell>
+                    <StackLayout
+                        Margin="5"
+                        Padding="5"
+                        BackgroundColor="#4286f4"
+                        HorizontalOptions="End">
+                        <Label
+                            HorizontalOptions="End"
+                            Text="{Binding Message}"
+                            TextColor="White" />
+                    </StackLayout>
+                </ViewCell>
+            </DataTemplate>
+            <DataTemplate x:Key="ServerTemplate">
+                <ViewCell>
+                    <StackLayout
+                        Margin="5"
+                        Padding="5"
+                        BackgroundColor="#b9bfc9"
+                        HorizontalOptions="Start">
+                        <Label HorizontalOptions="Start" Text="{Binding Message}" />
+                    </StackLayout>
+                </ViewCell>
+            </DataTemplate>
+
+            <local:TemplateSelector
+                x:Key="ChatDataTemplateSelector"
+                ServerTemplate="{StaticResource ServerTemplate}"
+                UserTemplate="{StaticResource UserTemplate}" />
+        </ResourceDictionary>
     </Application.Resources>
 </Application>
