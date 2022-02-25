@@ -10,12 +10,12 @@ using Xamarin.Forms.Xaml;
 namespace HealthMate.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class LoginPage : ContentPage
+    public partial class InputByVoicePage : ContentPage
     {
-        public LoginPage()
+        public InputByVoicePage()
         {
             InitializeComponent();
-            this.BindingContext = new LoginViewModel();
+            this.BindingContext = new ItemsViewModel();
         }
     }
 }
