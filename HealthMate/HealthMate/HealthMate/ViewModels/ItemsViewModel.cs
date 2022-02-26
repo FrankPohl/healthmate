@@ -1,6 +1,8 @@
-﻿using HealthMate.Views;
+﻿using HealthMate.Models;
+using HealthMate.Views;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 using Xamarin.Forms;
 
@@ -8,11 +10,9 @@ namespace HealthMate.ViewModels
 {
     public class ItemsViewModel : BaseViewModel
     {
-        public Command LoginCommand { get; }
 
         public ItemsViewModel()
         {
-            LoginCommand = new Command(OnLoginClicked);
         }
 
         private async void OnLoginClicked(object obj)
@@ -25,5 +25,10 @@ namespace HealthMate.ViewModels
         {
                 IsBusy = true;
         }
+
+        public ObservableCollection<MeasuredItem> BloodPressureList { get; }
+        public ObservableCollection<MeasuredItem> PulseList { get; }
+        public ObservableCollection<MeasuredItem> GlucoseList { get; }
+
     }
 }

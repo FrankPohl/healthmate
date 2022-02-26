@@ -1,4 +1,5 @@
 ﻿using HealthMate.Models;
+using HealthMate.Services;
 using HealthMate.Views;
 using System;
 using System.Collections.ObjectModel;
@@ -10,74 +11,48 @@ namespace HealthMate.ViewModels
 {
     public class InputByVoiceViewModel : BaseViewModel
     {
-        private MeasuredItem _selectedItem;
+        private MeasuredItem _inputItem = new MeasuredItem();
 
-        public ObservableCollection<InputByVoiceViewModel> Items { get; }
-        public Command LoadItemsCommand { get; }
-        public Command AddItemCommand { get; }
-        public Command<InputByVoiceViewModel> ItemTapped { get; }
-
+        public ObservableCollection<MessageDetailViewModel> Messages { get; }
         public InputByVoiceViewModel()
         {
-            Items = new ObservableCollection<InputByVoiceViewModel>();
-            LoadItemsCommand = new Command(async () => await ExecuteLoadItemsCommand());
-
-        //    ItemTapped = new Command<ItemsViewModel>(OnItemSelected);
-
-     //       AddItemCommand = new Command(OnAddItem);
+            Messages = new ObservableCollection<MessageDetailViewModel>();
+            LoadMockData();
         }
 
-        async Task ExecuteLoadItemsCommand()
+        private void EvaluateInoutAndIssueMessage(MeasuredItem item)
+        {
+            
+        }
+
+        private void LoadMockData()
+        {
+            Messages.Add(new MessageDetailViewModel() { Sender = MessageSender.Server, Message = "Servermessage" });
+            Messages.Add(new MessageDetailViewModel() { Sender = MessageSender.User, Message = "Usermessage" });
+            Messages.Add(new MessageDetailViewModel() { Sender = MessageSender.Server, Message = "Ich brauch noch das datum" });
+        }
+
+        public async void OnAppearing()
         {
             IsBusy = true;
-
-            try
-            {
-                Items.Clear();
-                var items = await DataStore.GetItemsAsync(true);
-                foreach (var item in items)
-                {
- //                   Items.Add(item);
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex);
-            }
-            finally
-            {
-                IsBusy = false;
-            }
+            var rc = new RecognitionService();
+            await rc.Init();
+            rc.Recognized += Rc_Recognized;
+            IsBusy = false;
         }
 
-        public void OnAppearing()
+        private void Rc_Recognized(object sender, MeasuredItem e)
         {
-            IsBusy = true;
-            SelectedItem = null;
+            EvaluateInoutAndIssueMessage(e);
         }
 
-        public MeasuredItem SelectedItem
+        public MeasuredItem InputItem
         {
-            get => _selectedItem;
+            get => _inputItem;
             set
             {
-                SetProperty(ref _selectedItem, value);
-                OnItemSelected(value);
+                SetProperty(ref _inputItem, value);
             }
-        }
-
-        //private async void OnAddItem(object obj)
-        //{
-        //    await Shell.Current.GoToAsync(nameof(NewItemPage));
-        //}
-
-        async void OnItemSelected(MeasuredItem item)
-        {
-            if (item == null)
-                return;
-
-            // This will push the ItemDetailPage onto the navigation stack
-            await Shell.Current.GoToAsync($"{nameof(ItemDetailPage)}?{nameof(MessageDetailViewModel.Message)}={item.MeasurementType}");
         }
     }
 }

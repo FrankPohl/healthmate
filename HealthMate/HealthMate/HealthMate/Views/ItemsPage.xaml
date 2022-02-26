@@ -6,6 +6,4 @@
              xmlns:local="clr-namespace:HealthMate.ViewModels"  
              xmlns:model="clr-namespace:HealthMate.Models"  
              x:Name="BrowseItemsPage">
-
-  
 </ContentPage>
