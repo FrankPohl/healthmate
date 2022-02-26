@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthMate.UWP", "HealthMat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthMate.Android", "HealthMate\HealthMate.Android\HealthMate.Android.csproj", "{B414A9B6-F9EA-4DF8-A8CD-79C76B2CC907}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthMate.iOS", "HealthMate\HealthMate.iOS\HealthMate.iOS.csproj", "{65CAE95D-E56D-4D1A-B5EF-8C6985477FF8}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HealthMate", "HealthMate\HealthMate\HealthMate.csproj", "{27B235E6-EC49-4394-8AF9-1AC1B9CCDE5F}"
 EndProject
 Global
@@ -99,42 +97,6 @@ Global
 		{B414A9B6-F9EA-4DF8-A8CD-79C76B2CC907}.Release|x86.ActiveCfg = Release|Any CPU
 		{B414A9B6-F9EA-4DF8-A8CD-79C76B2CC907}.Release|x86.Build.0 = Release|Any CPU
 		{B414A9B6-F9EA-4DF8-A8CD-79C76B2CC907}.Release|x86.Deploy.0 = Release|Any CPU
-		{65CAE95D-E56D-4D1A-B5EF-8C6985477FF8}.Debug|Any CPU.ActiveCfg = Debug|iPhoneSimulator
-		{65CAE95D-E56D-4D1A-B5EF-8C6985477FF8}.Debug|Any CPU.Build.0 = Debug|iPhoneSimulator
-		{65CAE95D-E56D-4D1A-B5EF-8C6985477FF8}.Debug|Any CPU.Deploy.0 = Debug|iPhoneSimulator
-		{65CAE95D-E56D-4D1A-B5EF-8C6985477FF8}.Debug|ARM.ActiveCfg = Debug|iPhoneSimulator
-		{65CAE95D-E56D-4D1A-B5EF-8C6985477FF8}.Debug|ARM.Build.0 = Debug|iPhoneSimulator
-		{65CAE95D-E56D-4D1A-B5EF-8C6985477FF8}.Debug|ARM.Deploy.0 = Debug|iPhoneSimulator
-		{65CAE95D-E56D-4D1A-B5EF-8C6985477FF8}.Debug|iPhone.ActiveCfg = Debug|iPhone
-		{65CAE95D-E56D-4D1A-B5EF-8C6985477FF8}.Debug|iPhone.Build.0 = Debug|iPhone
-		{65CAE95D-E56D-4D1A-B5EF-8C6985477FF8}.Debug|iPhone.Deploy.0 = Debug|iPhone
-		{65CAE95D-E56D-4D1A-B5EF-8C6985477FF8}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
-		{65CAE95D-E56D-4D1A-B5EF-8C6985477FF8}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
-		{65CAE95D-E56D-4D1A-B5EF-8C6985477FF8}.Debug|iPhoneSimulator.Deploy.0 = Debug|iPhoneSimulator
-		{65CAE95D-E56D-4D1A-B5EF-8C6985477FF8}.Debug|x64.ActiveCfg = Debug|iPhone
-		{65CAE95D-E56D-4D1A-B5EF-8C6985477FF8}.Debug|x64.Build.0 = Debug|iPhone
-		{65CAE95D-E56D-4D1A-B5EF-8C6985477FF8}.Debug|x64.Deploy.0 = Debug|iPhone
-		{65CAE95D-E56D-4D1A-B5EF-8C6985477FF8}.Debug|x86.ActiveCfg = Debug|iPhoneSimulator
-		{65CAE95D-E56D-4D1A-B5EF-8C6985477FF8}.Debug|x86.Build.0 = Debug|iPhoneSimulator
-		{65CAE95D-E56D-4D1A-B5EF-8C6985477FF8}.Debug|x86.Deploy.0 = Debug|iPhoneSimulator
-		{65CAE95D-E56D-4D1A-B5EF-8C6985477FF8}.Release|Any CPU.ActiveCfg = Release|iPhoneSimulator
-		{65CAE95D-E56D-4D1A-B5EF-8C6985477FF8}.Release|Any CPU.Build.0 = Release|iPhoneSimulator
-		{65CAE95D-E56D-4D1A-B5EF-8C6985477FF8}.Release|Any CPU.Deploy.0 = Release|iPhoneSimulator
-		{65CAE95D-E56D-4D1A-B5EF-8C6985477FF8}.Release|ARM.ActiveCfg = Release|iPhoneSimulator
-		{65CAE95D-E56D-4D1A-B5EF-8C6985477FF8}.Release|ARM.Build.0 = Release|iPhoneSimulator
-		{65CAE95D-E56D-4D1A-B5EF-8C6985477FF8}.Release|ARM.Deploy.0 = Release|iPhoneSimulator
-		{65CAE95D-E56D-4D1A-B5EF-8C6985477FF8}.Release|iPhone.ActiveCfg = Release|iPhone
-		{65CAE95D-E56D-4D1A-B5EF-8C6985477FF8}.Release|iPhone.Build.0 = Release|iPhone
-		{65CAE95D-E56D-4D1A-B5EF-8C6985477FF8}.Release|iPhone.Deploy.0 = Release|iPhone
-		{65CAE95D-E56D-4D1A-B5EF-8C6985477FF8}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
-		{65CAE95D-E56D-4D1A-B5EF-8C6985477FF8}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
-		{65CAE95D-E56D-4D1A-B5EF-8C6985477FF8}.Release|iPhoneSimulator.Deploy.0 = Release|iPhoneSimulator
-		{65CAE95D-E56D-4D1A-B5EF-8C6985477FF8}.Release|x64.ActiveCfg = Release|iPhoneSimulator
-		{65CAE95D-E56D-4D1A-B5EF-8C6985477FF8}.Release|x64.Build.0 = Release|iPhoneSimulator
-		{65CAE95D-E56D-4D1A-B5EF-8C6985477FF8}.Release|x64.Deploy.0 = Release|iPhoneSimulator
-		{65CAE95D-E56D-4D1A-B5EF-8C6985477FF8}.Release|x86.ActiveCfg = Release|iPhoneSimulator
-		{65CAE95D-E56D-4D1A-B5EF-8C6985477FF8}.Release|x86.Build.0 = Release|iPhoneSimulator
-		{65CAE95D-E56D-4D1A-B5EF-8C6985477FF8}.Release|x86.Deploy.0 = Release|iPhoneSimulator
 		{27B235E6-EC49-4394-8AF9-1AC1B9CCDE5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{27B235E6-EC49-4394-8AF9-1AC1B9CCDE5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27B235E6-EC49-4394-8AF9-1AC1B9CCDE5F}.Debug|Any CPU.Deploy.0 = Debug|Any CPU

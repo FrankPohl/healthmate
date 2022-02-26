@@ -33,25 +33,22 @@
             <DataTemplate x:Key="UserTemplate">
                 <ViewCell>
                     <StackLayout
-                        Margin="5"
-                        Padding="5"
+                        Margin="6"
+                        Padding="3"
                         BackgroundColor="#4286f4"
-                        HorizontalOptions="End">
-                        <Label
-                            HorizontalOptions="End"
-                            Text="{Binding Message}"
-                            TextColor="White" />
+                       >
+                        <Label HorizontalOptions="End"  Text="{Binding Message}" TextColor="White" />
                     </StackLayout>
                 </ViewCell>
             </DataTemplate>
             <DataTemplate x:Key="ServerTemplate">
-                <ViewCell>
+                <ViewCell >
                     <StackLayout
-                        Margin="5"
-                        Padding="5"
+                        Margin="6"
+                        Padding="3"
                         BackgroundColor="#b9bfc9"
-                        HorizontalOptions="Start">
-                        <Label HorizontalOptions="Start" Text="{Binding Message}" />
+                        >
+                        <Label HorizontalOptions="Start" Text="{Binding Message}"  TextColor="Black" />
                     </StackLayout>
                 </ViewCell>
             </DataTemplate>
@@ -60,6 +57,32 @@
                 x:Key="ChatDataTemplateSelector"
                 ServerTemplate="{StaticResource ServerTemplate}"
                 UserTemplate="{StaticResource UserTemplate}" />
+
+            <DataTemplate x:Key="BloodPressureTemplate">
+                <ViewCell>
+                    <StackLayout
+                        Margin="6"
+                        Padding="3"
+                        BackgroundColor="#4286f4"
+                       >
+                        <Label Text="{Binding MeasurementDateTime}" TextColor="White" />
+                        <Label Text="{Binding SysValue}" TextColor="White" />
+                        <Label Text="{Binding DiaValue}" TextColor="White" />
+                    </StackLayout>
+                </ViewCell>
+            </DataTemplate>
+            <DataTemplate x:Key="MeasurementTemplate">
+                <ViewCell>
+                    <StackLayout
+                        Margin="6"
+                        Padding="3"
+                        BackgroundColor="#4286f4"
+                       >
+                        <Label Text="{Binding MeasurementDateTime}" TextColor="White" />
+                        <Label Text="{Binding Measurement}" TextColor="White" />
+                    </StackLayout>
+                </ViewCell>
+            </DataTemplate>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

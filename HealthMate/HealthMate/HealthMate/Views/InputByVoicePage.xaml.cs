@@ -31,6 +31,10 @@ namespace HealthMate.Views
             {
                 _viewModel.OnAppearing();
         }
+            else
+            {
+                await DisplayAlert("Alert", "You have enable the microphone for this app to put in your measurements.", "OK");
+            }
 
 
     }

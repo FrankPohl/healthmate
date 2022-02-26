@@ -2,8 +2,29 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="HealthMate.Views.ItemsPage"
-             Title="Communicaiton"
+             Title="Lists of stored parameters"
              xmlns:local="clr-namespace:HealthMate.ViewModels"  
              xmlns:model="clr-namespace:HealthMate.Models"  
-             x:Name="BrowseItemsPage">
+             >
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackLayout Grid.Row="0">
+            <Label Text="Bloddpressure"/>
+            <ListView ItemsSource="{Binding BloodPressureList, Mode=OneWay}" ItemTemplate="{StaticResource BloodPressureTemplate}"/>
+        </StackLayout>
+        <StackLayout Grid.Row="1">
+            <Label Text="Pulse"/>
+            <ListView ItemsSource="{Binding PulseList, Mode=OneWay}" ItemTemplate="{StaticResource MeasurementTemplate}"/>
+        </StackLayout>
+        <StackLayout Grid.Row="2">
+            <Label Text="Glucose"/>
+                    <ListView ItemsSource="{Binding GlucoseList, Mode=OneWay}" ItemTemplate="{StaticResource MeasurementTemplate}"/>
+                </StackLayout>
+    </Grid>
 </ContentPage>

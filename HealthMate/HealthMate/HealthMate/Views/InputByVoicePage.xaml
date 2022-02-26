@@ -4,13 +4,20 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
+             Title="Input measurement"
              x:Class="HealthMate.Views.InputByVoicePage"
              Shell.NavBarIsVisible="False">
-    
-    <ListView xmlns="http://xamarin.com/schemas/2014/forms" 
-          xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-          HasUnevenRows="True"       
+    <Grid BackgroundColor="Red">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <ListView Grid.Row="0" HasUnevenRows="True"     
           ItemTemplate="{StaticResource ChatDataTemplateSelector}"
-          ItemsSource="{Binding Messages}">
-    </ListView>
+          ItemsSource="{Binding Messages, Mode=OneWay}">
+        </ListView>
+        <ImageButton Grid.Row="1" Command="{Binding ToggleMicCommand, Mode=OneWay}"  Source="mic.png" />
+        <Label Grid.Row="2" Text= "{Binding ProcessingState, Mode=OneWay}" TextColor="Blue"/>
+    </Grid>
 </ContentPage>
