@@ -6,6 +6,7 @@ using Android.Runtime;
 using Android.Support.V4.App;
 using Android.Views;
 using Android.Widget;
+using AndroidX.Core.App;
 using Google.Android.Material.Snackbar;
 using HealthMate.Services;
 using System;
@@ -27,15 +28,8 @@ namespace HealthMate.Droid.Services
             tcsPermissions = new TaskCompletionSource<bool>();
 
             // Permissions are required only for Marshmallow and up
-            if ((int)Build.VERSION.SdkInt < 23)
-            {
-                tcsPermissions.TrySetResult(true);
-            }
-            else
-            {
                 var currentActivity = MainActivity.Instance;
-                if ((ActivityCompat.CheckSelfPermission(currentActivity, Manifest.Permission.RecordAudio) != (int)Android.Content.PM.Permission.Granted) ||
-                    ActivityCompat.CheckSelfPermission(currentActivity, Manifest.Permission.ReadExternalStorage) != (int)Android.Content.PM.Permission.Granted)
+                if (ActivityCompat.CheckSelfPermission(currentActivity, Manifest.Permission.RecordAudio) != (int)Android.Content.PM.Permission.Granted)
                 {
                     RequestMicPermission();
                 }
@@ -43,7 +37,6 @@ namespace HealthMate.Droid.Services
                 {
                     tcsPermissions.TrySetResult(true);
                 }
-            }
             return tcsPermissions.Task;
         }
 

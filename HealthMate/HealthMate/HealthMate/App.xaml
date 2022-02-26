@@ -60,7 +60,7 @@
 
             <DataTemplate x:Key="BloodPressureTemplate">
                 <ViewCell>
-                    <StackLayout
+                    <StackLayout Orientation="Horizontal"
                         Margin="6"
                         Padding="3"
                         BackgroundColor="#4286f4"
@@ -73,7 +73,7 @@
             </DataTemplate>
             <DataTemplate x:Key="MeasurementTemplate">
                 <ViewCell>
-                    <StackLayout
+                    <StackLayout Orientation="Horizontal"
                         Margin="6"
                         Padding="3"
                         BackgroundColor="#4286f4"

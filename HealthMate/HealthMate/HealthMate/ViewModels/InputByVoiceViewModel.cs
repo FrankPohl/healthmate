@@ -21,13 +21,15 @@ namespace HealthMate.ViewModels
         {
             Messages = new ObservableCollection<MessageDetailViewModel>();
             LoadMockData();
-            ToggleMicCommand = new Command(() => 
+            ToggleMicCommand = new Command(async () => 
             { 
                 if (IsListening)
                 {
                     IsListening = false;
                     ProcessingState = "Mute";
+                    await rc.StopListening();
                     rc.Recognized -= Rc_Recognized;
+                    
 
                 }
                 else
@@ -35,6 +37,7 @@ namespace HealthMate.ViewModels
                     ProcessingState = "Listening";
                     IsListening = true;
                     rc.Recognized += Rc_Recognized;
+                    await rc.StartListening();
                 }
             });
         }
@@ -57,12 +60,14 @@ namespace HealthMate.ViewModels
             IsListening = true;
             await rc.Init();
             rc.Recognized += Rc_Recognized;
+            await rc.StartListening();
             ProcessingState = "Listening";
             IsBusy = false;
         }
 
         private void Rc_Recognized(object sender, MeasuredItem e)
         {
+            Debug.WriteLine($"Something recognized {e.Measurement}");
             EvaluateInoutAndIssueMessage(e);
         }
 

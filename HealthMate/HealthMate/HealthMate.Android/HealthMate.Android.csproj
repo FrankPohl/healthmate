@@ -58,9 +58,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Bot.Connector">
-      <Version>4.15.2</Version>
-    </PackageReference>
     <PackageReference Include="Microsoft.CognitiveServices.Speech">
       <Version>1.20.0</Version>
     </PackageReference>
