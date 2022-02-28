@@ -8,6 +8,7 @@
         Define global resources and styles here, that apply to all pages in your app.
     -->
     <Application.Resources>
+        <local:StateToImageConverter x:Key="StateToImageConverter" />
         <ResourceDictionary>
             <Color x:Key="Primary">#2196F3</Color>
             <x:Double x:Key="SelectedFontSize">11</x:Double>
@@ -31,26 +32,22 @@
                 </Setter>
             </Style>
             <DataTemplate x:Key="UserTemplate">
-                <ViewCell>
                     <StackLayout
                         Margin="6"
                         Padding="3"
                         BackgroundColor="#4286f4"
                        >
-                        <Label HorizontalOptions="End"  Text="{Binding Message}" TextColor="White" />
+                        <Label HorizontalOptions="End"  Text="{Binding Message}" MaxLines="3"  TextColor="White" />
                     </StackLayout>
-                </ViewCell>
             </DataTemplate>
             <DataTemplate x:Key="ServerTemplate">
-                <ViewCell >
                     <StackLayout
                         Margin="6"
                         Padding="3"
                         BackgroundColor="#b9bfc9"
                         >
-                        <Label HorizontalOptions="Start" Text="{Binding Message}"  TextColor="Black" />
+                        <Label HorizontalOptions="Start" Text="{Binding Message}"  MaxLines="3" TextColor="Black" LineBreakMode="MiddleTruncation" />
                     </StackLayout>
-                </ViewCell>
             </DataTemplate>
 
             <local:TemplateSelector

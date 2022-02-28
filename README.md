@@ -13,3 +13,13 @@ The app is implemented as a Xamarin.Forms app following the template Visual Stud
 
 In LUIS we have setup an app with different intents for the actions.
  
+ The entities array was never filled therefore I used the JSon property with the same content.
+ Therefore I had to install the Newtonsoft JSon nuget package
+LUISHealthMateEN
+Created the app in AZur
+
+Intents defined for the different things.
+
+My pulse was 73 at 9:30 am today.
+
+

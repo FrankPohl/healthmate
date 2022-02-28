@@ -7,17 +7,17 @@
              Title="Input measurement"
              x:Class="HealthMate.Views.InputByVoicePage"
              Shell.NavBarIsVisible="False">
-    <Grid BackgroundColor="Red">
+    <Grid >
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <ListView Grid.Row="0" HasUnevenRows="True"     
-          ItemTemplate="{StaticResource ChatDataTemplateSelector}"
+        <CollectionView Grid.Row="0" ItemsUpdatingScrollMode="KeepLastItemInView"    
+          CollectionView.ItemTemplate="{StaticResource ChatDataTemplateSelector}"
           ItemsSource="{Binding Messages, Mode=OneWay}">
-        </ListView>
-        <ImageButton Grid.Row="1" Command="{Binding ToggleMicCommand, Mode=OneWay}"  Source="mic.png" />
+        </CollectionView>
+        <ImageButton Grid.Row="1" Command="{Binding ToggleMicCommand, Mode=OneWay}"  Source="{Binding IsListening, Converter={StaticResource StateToImageConverter}}" />
         <Label Grid.Row="2" Text= "{Binding ProcessingState, Mode=OneWay}" TextColor="Blue"/>
     </Grid>
 </ContentPage>

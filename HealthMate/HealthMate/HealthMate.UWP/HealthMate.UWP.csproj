@@ -108,6 +108,7 @@
     <Content Include="icon_list.png" />
     <Content Include="icon_mic.png" />
     <Content Include="mic.png" />
+    <Content Include="mic_muted.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LargeTile.scale-100.png" />
     <Content Include="Assets\LargeTile.scale-200.png" />

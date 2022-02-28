@@ -6,12 +6,17 @@ using System.Threading.Tasks;
 using HealthMate.Models;
 using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Intent;
+using Newtonsoft.Json.Linq;
 
 namespace HealthMate.Services
 {
     public class RecognitionService
     {
-        public event EventHandler<MeasuredItem> Recognized;
+        public event EventHandler<MeasuredItem> RecognizedIntent;
+        public event EventHandler<String> RecognizedText;
+        public event EventHandler<string> NothingProcessableRecognized;
+        public event EventHandler CancelRecognized;
+        public event EventHandler ConfirmRecognized;
 
         IntentRecognizer recognizer;
         private bool isListening;
@@ -44,14 +49,271 @@ namespace HealthMate.Services
         }
         private void Recognizer_Recognized(object sender, IntentRecognitionEventArgs e)
         {
-            Debug.WriteLine($"Evaluate Args mit Intent: {e.Result.IntentId} mit Text: {e.Result.Text} und einigen Entities: {e.Result.Entities.Count}");
             // we just checked whether something useful was said
             // if not we do nothing furhter processing of recognized text is done in the business logic
-            if (!string.IsNullOrEmpty(e.Result.Text))
+            if (e.Result.Reason == ResultReason.RecognizedIntent)
             {
+                RecognizedText?.Invoke(this, e.Result.Text);
                 var item = new MeasuredItem();
-                Recognized?.Invoke(this, item);
+                // for some reason the entities are empty but the json is filled. no time to evalate that during the hackathon
+                // read all the entity info from the json to get detail info
+                var result = JObject.Parse(e.Result.Properties.GetProperty(PropertyId.LanguageUnderstandingServiceResponse_JsonResult))["entities"];
+                var entities = result.ToObject<List<Entity>>();
+                DateTime datePortion;
+                TimeSpan timePortion;
+                double dblValue = 0;
+                int intValue;
+                Debug.WriteLine($"Process intent {e.Result.IntentId}");
+                // set the item structure with the estimated entitiwes for the intents
+                switch (e.Result.IntentId)
+                {
+                    case "BloodPressure":
+                        item.MeasurementType = Intent.BloodPressure;
+                        intValue = GetFirstNumber(entities);
+                        if (intValue > 0)
+                        {
+                            item.SysValue = intValue;
+                        }
+                        intValue = GetSecondNumber(entities);
+                        if (intValue > 0)
+                        {
+                            item.DiaValue = intValue;
+                        }
+                        datePortion = GetDate(entities);
+                        if (datePortion != DateTime.MinValue)
+                            item.MeasurementDateTime = datePortion;
+                        timePortion = GetTime(entities);
+                        if (timePortion != TimeSpan.Zero)
+                            item.MeasurementDateTime = item.MeasurementDateTime.Add(timePortion);
+                        RecognizedIntent?.Invoke(this, item);
+                        break;
+                    case "Temperature":
+                        item.MeasurementType = Intent.Temperature;
+                        dblValue = GetDoubleNumber(entities);
+                        if (dblValue > 0)
+                        {
+                            item.Measurement = dblValue;
+                        }
+                        datePortion = GetDate(entities);
+                        if (datePortion != DateTime.MinValue)
+                            item.MeasurementDateTime = datePortion;
+                        timePortion = GetTime(entities);
+                        if (timePortion != TimeSpan.Zero)
+                            item.MeasurementDateTime = item.MeasurementDateTime.Add(timePortion);
+                        RecognizedIntent?.Invoke(this, item);
+                        break;
+                    case "Pulse":
+                        item.MeasurementType = Intent.Pulse;
+                        intValue = GetNumber(entities);
+                        if (intValue > 0)
+                        {
+                            item.Measurement = intValue;
+                        }
+                        datePortion = GetDate(entities);
+                        if (datePortion != DateTime.MinValue)
+                            item.MeasurementDateTime = datePortion;
+                        timePortion = GetTime(entities);
+                        if (timePortion != TimeSpan.Zero)
+                            item.MeasurementDateTime = item.MeasurementDateTime.Add(timePortion);
+
+                        RecognizedIntent?.Invoke(this, item);
+                        break;
+                    case "Glucose":
+                        item.MeasurementType = Intent.Glucose;
+                        intValue = GetNumber(entities);
+                        if (intValue > 0)
+                        {
+                            item.Measurement = intValue;
+                        }
+                        datePortion = GetDate(entities);
+                        if (datePortion != DateTime.MinValue)
+                            item.MeasurementDateTime = datePortion;
+                        timePortion = GetTime(entities);
+                        if (timePortion != TimeSpan.Zero)
+                            item.MeasurementDateTime = item.MeasurementDateTime.Add(timePortion);
+                        RecognizedIntent?.Invoke(this, item);
+                        break;
+                    case "Utilities.Reject":
+                    case "Utilities.Cancel":
+                        CancelRecognized?.Invoke(this, EventArgs.Empty);
+                        break;
+                    case "Utilities.Confirm":
+                        ConfirmRecognized?.Invoke(this, EventArgs.Empty);
+                        break;
+                    case "DateTimeAck":
+                        datePortion = GetDate(entities);
+                        if (datePortion != DateTime.MinValue)
+                            item.MeasurementDateTime = datePortion;
+                        timePortion = GetTime(entities);
+                        if (timePortion != TimeSpan.Zero)
+                            item.MeasurementDateTime = item.MeasurementDateTime.Add(timePortion);
+                        RecognizedIntent?.Invoke(this, item);
+                        break;
+                    default:
+                        item.MeasurementType = Intent.None;
+                        break;
+                }
+            }
+            else
+            {
+                NothingProcessableRecognized?.Invoke(this, e.Result.Text);
             }
         }
+        private int GetNumber(List<Entity> result)
+        {
+            foreach (var entity in result)
+            {
+                if (entity.type == "builtin.number")
+                {
+                    Debug.WriteLine($"{entity.resolution.value}");
+                    return Convert.ToInt16(entity.resolution.value);
+                }
+            }
+            return 0;
+        }
+        private double GetDoubleNumber(List<Entity> result)
+        {
+            foreach (var entity in result)
+            {
+                if (entity.type == "builtin.number")
+                {
+                    return Convert.ToDouble(entity.resolution.value);
+                }
+            }
+            return 0;
+        }
+
+        /// <summary>
+        /// Find the second number for the sys/dia combination
+        /// We expect the dia value to be given first
+        /// </summary>
+        /// <param name="result">List of all entities that are recognized in the utterance</param>
+        /// <returns>The value of the diastole value or 0 if nothing is found</returns>
+        private int GetSecondNumber(List<Entity> result)
+        {
+            int firstFoundPos = 0;
+            foreach (var entity in result)
+            {
+                if (entity.type == "builtin.number")
+                {
+                    if (firstFoundPos == 0)
+                    {
+                        firstFoundPos = entity.startIndex;
+                    }
+                    else
+                    {
+                        if ((entity.startIndex > firstFoundPos) && (firstFoundPos > 0))
+                        {
+                            return Convert.ToInt16(entity.resolution.value);
+                        }
+                    }
+                }
+            }
+            return 0;
+        }
+        /// <summary>
+        /// Find the first number for the sys/dia combination
+        /// We expect the sys value to be given first
+        /// </summary>
+        /// <param name="result">List of all entities that are recognized in the utterance</param>
+        /// <returns>The value of the systole value or 0 if nothing is found. </returns>
+        private int GetFirstNumber(List<Entity> result)
+        {
+            int firstFound = 0;
+            int firstFoundPos = 0;
+            foreach (var entity in result)
+            {
+                if (entity.type == "builtin.number")
+                {
+                    if (firstFoundPos == 0)
+                    {
+                        firstFoundPos = entity.startIndex;
+                        firstFound = Convert.ToInt16(entity.resolution.value);
+                    }
+                    else
+                    {
+                        if (entity.startIndex < firstFoundPos)
+                        {
+                            firstFoundPos = entity.startIndex;
+                            firstFound = Convert.ToInt16(entity.resolution.value);
+                        }
+                    }
+                }
+            }
+            return firstFound;
+        }
+        private DateTime GetDate(List<Entity> result)
+        {
+            foreach (var entity in result)
+            {
+                if (entity.type == "builtin.datetimeV2.date" || entity.type == "builtin.datetimeV2.datetime")
+                {
+                    string str;
+                    if (entity.resolution.values.Count > 0)
+                    {
+                        str = ((JObject)entity.resolution.values[0]).GetValue("timex").ToString();
+                    }
+                    else
+                    {
+                        str = entity.resolution.value;
+                    }
+                    str = str.Substring(0, 10);
+                    Debug.WriteLine($"Date Part: {str}");
+                    return DateTime.Parse(str.Substring(0, 10));
+                }
+            }
+            return DateTime.MinValue;
+        }
+        private TimeSpan GetTime(List<Entity> result)
+        {
+            foreach (var entity in result)
+            {
+                if (entity.type == "builtin.datetimeV2.date" || entity.type == "builtin.datetimeV2.datetime")
+                {
+                    string str;
+                    if (entity.resolution.values.Count > 0)
+                    {
+                        str = ((JObject)entity.resolution.values[0]).GetValue("timex").ToString();
+                    }
+                    else
+                    {
+                        str = entity.resolution.value;
+                    }
+                    if (str.Length > 11)
+                    {
+                        str = str.Substring(11);
+                        Debug.WriteLine($"Time Part: {str}");
+                        return TimeSpan.Parse(str);
+                    }
+                }
+            }
+            return TimeSpan.Zero;
+        }
+    }
+
+
+    public class Entity
+    {
+        public string entity { get; set; }
+        public string type { get; set; }
+        public int startIndex { get; set; }
+        public int endIndex { get; set; }
+        public Resolution resolution { get; set; }
+
+    }
+
+    public class Resolution
+    {
+        public List<object> values { get; set; }
+        public string subtype { get; set; }
+        public string value { get; set; }
+    }
+
+    public class ValueDetail
+    {
+        public string timex { get; set; }
+        public string type { get; set; }
+        public string value { get; set; }
+
     }
 }
