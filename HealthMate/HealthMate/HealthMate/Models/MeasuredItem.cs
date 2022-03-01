@@ -12,6 +12,13 @@ namespace HealthMate.Models
         Cancel,
         None
     };
+    public enum Measurement
+    {
+        BloodPressure,
+        Glucose,
+        Pulse,
+        Temperature
+    };
     public class MeasuredItem
     {
         public string Id { get; set; }

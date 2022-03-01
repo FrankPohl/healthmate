@@ -4,9 +4,9 @@ using Xamarin.Forms;
 
 namespace HealthMate.Views
 {
-    public partial class ItemDetailPage : ContentPage
+    public partial class ChartsPage : ContentPage
     {
-        public ItemDetailPage()
+        public ChartsPage()
         {
             InitializeComponent();
             BindingContext = new MessageDetailViewModel();

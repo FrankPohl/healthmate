@@ -44,6 +44,29 @@ namespace HealthMate.ViewModels
             });
         }
 
+        private bool CheckNewItemComplete()
+        {
+            if (_inputItem.MeasurementType == Intent.None)
+                return false;
+            if (_inputItem.MeasurementDateTime == DateTime.MinValue)
+                return false;
+
+            if (_inputItem.MeasurementType == Intent.BloodPressure)
+            {
+                if (_inputItem.SysValue == 0)
+                    return false;
+                if (_inputItem.DiaValue == 0)
+                    return false;
+            }
+            else
+            {
+                if (_inputItem.Measurement == 0)
+                    return false;
+            }
+
+            // if we end up here every necessary field is filled
+            return true;
+        }
         private void Rc_CancelRecognized(object sender, EventArgs e)
         {
             Device.BeginInvokeOnMainThread(() =>
@@ -55,9 +78,14 @@ namespace HealthMate.ViewModels
 
         private void Rc_ConfirmRecognized(object sender, EventArgs e)
         {
-            Device.BeginInvokeOnMainThread(() =>
+            Device.BeginInvokeOnMainThread(async () =>
             {
-                Messages.Add(new MessageDetailViewModel() { Sender = MessageSender.Server, Message = $"Saving your data. {Environment.NewLine} Do you want to enter another measurment?" });
+                if (CheckNewItemComplete())
+                {
+                    Messages.Add(new MessageDetailViewModel() { Sender = MessageSender.Server, Message = $"Saving your data. {Environment.NewLine} Do you want to enter another measurment?" });
+                    await DataStore.AddItemAsync(_inputItem);
+                }
+
             });
         }
 
@@ -119,14 +147,17 @@ namespace HealthMate.ViewModels
                 return;
             }
 
-            // when we finally end up down here we have everything and ask for confirmation to save the data
-            if (_inputItem.MeasurementType == Intent.BloodPressure)
+            if (CheckNewItemComplete())
             {
-                Messages.Add(new MessageDetailViewModel() { Sender = MessageSender.Server, Message = $"Do you want to save blood pressure {_inputItem.SysValue} to {_inputItem.DiaValue} measured on {_inputItem.MeasurementDateTime}?" });
-            }
-            else
-            {
-                Messages.Add(new MessageDetailViewModel() { Sender = MessageSender.Server, Message = $"Do you want to save value {_inputItem.Measurement} for {_inputItem.MeasurementType} measured on {_inputItem.MeasurementDateTime}?" });
+                // when we finally end up down here we have everything and ask for confirmation to save the data
+                if (_inputItem.MeasurementType == Intent.BloodPressure)
+                {
+                    Messages.Add(new MessageDetailViewModel() { Sender = MessageSender.Server, Message = $"Do you want to save blood pressure {_inputItem.SysValue} to {_inputItem.DiaValue} measured on {_inputItem.MeasurementDateTime}?" });
+                }
+                else
+                {
+                    Messages.Add(new MessageDetailViewModel() { Sender = MessageSender.Server, Message = $"Do you want to save value {_inputItem.Measurement} for {_inputItem.MeasurementType} measured on {_inputItem.MeasurementDateTime}?" });
+                }
             }
         }
 

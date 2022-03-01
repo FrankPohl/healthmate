@@ -32,22 +32,26 @@
                 </Setter>
             </Style>
             <DataTemplate x:Key="UserTemplate">
+                <Grid Margin="0" Padding="0" RowSpacing="0" >
                     <StackLayout
                         Margin="6"
                         Padding="3"
                         BackgroundColor="#4286f4"
                        >
-                        <Label HorizontalOptions="End"  Text="{Binding Message}" MaxLines="3"  TextColor="White" />
+                        <Label HorizontalOptions="End"  Text="{Binding Message}" MaxLines="4"   TextColor="White" LineBreakMode="WordWrap" />
                     </StackLayout>
+                </Grid>
             </DataTemplate>
             <DataTemplate x:Key="ServerTemplate">
+                <Grid Margin="0,3,0,3" Padding="0" RowSpacing="0">
                     <StackLayout
                         Margin="6"
                         Padding="3"
                         BackgroundColor="#b9bfc9"
                         >
-                        <Label HorizontalOptions="Start" Text="{Binding Message}"  MaxLines="3" TextColor="Black" LineBreakMode="MiddleTruncation" />
+                        <Label HorizontalOptions="Start" Text="{Binding Message}"  MaxLines="4" TextColor="Black" LineBreakMode="WordWrap"/>
                     </StackLayout>
+                </Grid>
             </DataTemplate>
 
             <local:TemplateSelector

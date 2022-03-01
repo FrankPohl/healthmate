@@ -105,8 +105,10 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="icon_chart.png" />
     <Content Include="icon_list.png" />
     <Content Include="icon_mic.png" />
+    <Content Include="icon_settings.png" />
     <Content Include="mic.png" />
     <Content Include="mic_muted.png" />
     <Content Include="Properties\Default.rd.xml" />

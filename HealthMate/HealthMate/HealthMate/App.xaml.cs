@@ -13,7 +13,7 @@ namespace HealthMate
         {
             InitializeComponent();
 
-            DependencyService.Register<MockDataStore>();
+            DependencyService.Register<FileDataStore>();
             MainPage = new AppShell();
         }
 

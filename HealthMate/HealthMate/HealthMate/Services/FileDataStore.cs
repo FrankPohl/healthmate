@@ -8,12 +8,12 @@ using Xamarin.Essentials;
 
 namespace HealthMate.Services
 {
-    public class MockDataStore : IDataStore<MeasuredItem>
+    public class FileDataStore : IDataStore<MeasuredItem>
     {
         readonly string appDataDir;
         readonly List<MeasuredItem> items;
 
-        public MockDataStore()
+        public FileDataStore()
         {
             appDataDir = FileSystem.AppDataDirectory;
             //items = new List<MeasuredItem>()
@@ -97,8 +97,32 @@ namespace HealthMate.Services
             return await Task.FromResult(items.FirstOrDefault(s => s.Id == id));
         }
 
-        public async Task<IEnumerable<MeasuredItem>> GetItemsAsync(bool forceRefresh = false)
+        /// <summary>
+        /// Reads a certain type of measurements from the data store
+        /// </summary>
+        /// <param name="Type"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<MeasuredItem>> GetItemsAsync(Measurement Type)
         {
+
+            var fileName = $"{Type}.csv";
+            // Create the file and the first headerline on first occurence
+            // using csv because we can use it for Excel export too
+            if (File.Exists(fileName))
+            {
+                using (var stream = File.OpenRead(fileName))
+                {
+
+                    using (var reader = new StreamReader(stream))
+                    {
+                        var content = await reader.ReadToEndAsync();
+                        foreach (var record in content.Split())
+                        {
+                            items.Add(new MeasuredItem() { Measurement = record[1], MeasurementDateTime=Convert.ToDateTime(record[2]) });
+                        }
+                    }
+                }
+            }
             return await Task.FromResult(items);
         }
     }

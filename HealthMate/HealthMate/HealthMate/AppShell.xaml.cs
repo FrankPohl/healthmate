@@ -11,7 +11,6 @@ namespace HealthMate
         public AppShell()
         {
             InitializeComponent();
-            Routing.RegisterRoute(nameof(ItemDetailPage), typeof(ItemDetailPage));
         }
 
     }
