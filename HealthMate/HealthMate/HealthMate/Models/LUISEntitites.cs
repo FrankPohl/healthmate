@@ -28,4 +28,10 @@ namespace HealthMate.Models
         public string value { get; set; }
 
     }
+
+    public class IntentScoring
+    {
+        public string intent { get; set; }
+        public double score { get; set; }
+    }
 }

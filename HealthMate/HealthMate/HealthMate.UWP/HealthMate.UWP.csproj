@@ -105,6 +105,10 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\Square44x44Logo.altform-lightunplated_targetsize-16.png" />
+    <Content Include="Assets\Square44x44Logo.altform-lightunplated_targetsize-256.png" />
+    <Content Include="Assets\Square44x44Logo.altform-lightunplated_targetsize-48.png" />
+    <Content Include="healthmate_icon_128_black.png" />
     <Content Include="icon_chart.png" />
     <Content Include="icon_list.png" />
     <Content Include="icon_mic.png" />
@@ -139,7 +143,6 @@
     <Content Include="Assets\Wide310x150Logo.scale-100.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
     <Content Include="Assets\Wide310x150Logo.scale-400.png" />
-    <Content Include="xamarin_logo.png" />
     <Content Include="icon_about.png" />
   </ItemGroup>
   <ItemGroup>

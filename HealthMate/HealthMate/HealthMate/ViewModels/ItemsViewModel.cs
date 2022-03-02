@@ -19,14 +19,6 @@ namespace HealthMate.ViewModels
             BloodPressureList.Add(new MeasuredItem() { MeasurementDateTime = DateTime.Now, DiaValue = 80, SysValue = 120 });
             BloodPressureList.Add(new MeasuredItem() { MeasurementDateTime = DateTime.Now, DiaValue = 80, SysValue = 120 });
             BloodPressureList.Add(new MeasuredItem() { MeasurementDateTime = DateTime.Now, DiaValue = 80, SysValue = 120 });
-            PulseList.Add(new MeasuredItem() { MeasurementDateTime = DateTime.Now, Measurement = 120 });
-            PulseList.Add(new MeasuredItem() { MeasurementDateTime = DateTime.Now, Measurement = 1220 });
-            PulseList.Add(new MeasuredItem() { MeasurementDateTime = DateTime.Now, Measurement = 800 });
-            PulseList.Add(new MeasuredItem() { MeasurementDateTime = DateTime.Now, Measurement = 801 });
-            GlucoseList.Add(new MeasuredItem() { MeasurementDateTime = DateTime.Now, Measurement = 125 });
-            GlucoseList.Add(new MeasuredItem() { MeasurementDateTime = DateTime.Now, Measurement = 123 });
-            GlucoseList.Add(new MeasuredItem() { MeasurementDateTime = DateTime.Now, Measurement = 212 });
-            GlucoseList.Add(new MeasuredItem() { MeasurementDateTime = DateTime.Now, Measurement = 222 });
         }
 
         public ItemsViewModel()

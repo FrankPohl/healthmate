@@ -12,17 +12,5 @@ namespace HealthMate.Views
         {
             InitializeComponent();
         }
-
-        private async void ButtonClicked(object sender, EventArgs e)
-        {
-            var micservice = DependencyService.Get<IMicService>();
-            bool ismIcOK = await micservice.GetPermissionsAsync();
-            if (ismIcOK)
-            {
-                var rc = new RecognitionService();
-                await rc.Init();
-            }
-
-        }
     }
 }

@@ -16,20 +16,11 @@ namespace HealthMate.Services
         public FileDataStore()
         {
             appDataDir = FileSystem.AppDataDirectory;
-            //items = new List<MeasuredItem>()
-            //{
-            //    new Item { Id = Guid.NewGuid().ToString(), Text = "First item", Description="This is an item description." },
-            //    new Item { Id = Guid.NewGuid().ToString(), Text = "Second item", Description="This is an item description." },
-            //    new Item { Id = Guid.NewGuid().ToString(), Text = "Third item", Description="This is an item description." },
-            //    new Item { Id = Guid.NewGuid().ToString(), Text = "Fourth item", Description="This is an item description." },
-            //    new Item { Id = Guid.NewGuid().ToString(), Text = "Fifth item", Description="This is an item description." },
-            //    new Item { Id = Guid.NewGuid().ToString(), Text = "Sixth item", Description="This is an item description." }
-            //};
         }
 
         public async Task<bool> AddItemAsync(MeasuredItem item)
         {
-            var fileName = $"{item.MeasurementType}.csv";
+            var fileName = Path.Combine(appDataDir, $"{item.MeasurementType}.csv");
             // Create the file and the first headerline on first occurence
             // using csv because we can use it for Excel export too
             if (!File.Exists(fileName))
@@ -40,7 +31,7 @@ namespace HealthMate.Services
 
                     using (var streamWriter = new StreamWriter(stream))
                     {
-                        if (item.MeasurementType == Intent.BloodPressure)
+                        if (item.MeasurementType == Measurement.BloodPressure)
                         {
                             streamWriter.WriteLineAsync("ID;MeasredType;MeasurmentDateTime;Sys;Dia");
                         }
@@ -59,13 +50,13 @@ namespace HealthMate.Services
                     using (var streamWriter = new StreamWriter(stream))
                     {
                         string str = $"{item.Id};{item.MeasurementType};{item.MeasurementDateTime}";
-                        if (item.MeasurementType == Intent.BloodPressure)
+                        if (item.MeasurementType == Measurement.BloodPressure)
                         {
                             str += $"{item.SysValue};{item.DiaValue}";
                         }
                         else
                         {
-                            str += $"{item.Measurement}";
+                            str += $"{item.MeasuredValue}";
                         }
                         await streamWriter.WriteLineAsync(str);
                     }
@@ -105,7 +96,7 @@ namespace HealthMate.Services
         public async Task<IEnumerable<MeasuredItem>> GetItemsAsync(Measurement Type)
         {
 
-            var fileName = $"{Type}.csv";
+            var fileName = Path.Combine(appDataDir, $"{Type}.csv");
             // Create the file and the first headerline on first occurence
             // using csv because we can use it for Excel export too
             if (File.Exists(fileName))
@@ -118,7 +109,7 @@ namespace HealthMate.Services
                         var content = await reader.ReadToEndAsync();
                         foreach (var record in content.Split())
                         {
-                            items.Add(new MeasuredItem() { Measurement = record[1], MeasurementDateTime=Convert.ToDateTime(record[2]) });
+                            items.Add(new MeasuredItem() { MeasuredValue = record[1], MeasurementDateTime=Convert.ToDateTime(record[2]) });
                         }
                     }
                 }

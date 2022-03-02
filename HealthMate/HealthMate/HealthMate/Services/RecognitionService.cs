@@ -57,18 +57,25 @@ namespace HealthMate.Services
                 var item = new MeasuredItem();
                 // for some reason the entities are empty but the json is filled. no time to evalate that during the hackathon
                 // read all the entity info from the json to get detail info
-                var result = JObject.Parse(e.Result.Properties.GetProperty(PropertyId.LanguageUnderstandingServiceResponse_JsonResult))["entities"];
-                var entities = result.ToObject<List<Entity>>();
+                var json = JObject.Parse(e.Result.Properties.GetProperty(PropertyId.LanguageUnderstandingServiceResponse_JsonResult))["entities"];
+                var entities = json.ToObject<List<Entity>>();
+                json = JObject.Parse(e.Result.Properties.GetProperty(PropertyId.LanguageUnderstandingServiceResponse_JsonResult))["topScoringIntent"];
+                var intentscore = json.ToObject<IntentScoring>();
                 DateTime datePortion;
                 TimeSpan timePortion;
                 double dblValue = 0;
                 int intValue;
-                Debug.WriteLine($"Process intent {e.Result.IntentId}");
-                // set the item structure with the estimated entitiwes for the intents
+                Debug.WriteLine($"Process intent {e.Result.IntentId} with score {intentscore.score}");
+                if (intentscore.score < 0.3)
+                {
+                    NothingProcessableRecognized?.Invoke(this, e.Result.Text);
+                    return;
+                }
+                // set the item structure with the estimated entities for the intents
                 switch (e.Result.IntentId)
                 {
                     case "BloodPressure":
-                        item.MeasurementType = Intent.BloodPressure;
+                        item.MeasurementType = Measurement.BloodPressure;
                         intValue = GetFirstNumber(entities);
                         if (intValue > 0)
                         {
@@ -88,11 +95,11 @@ namespace HealthMate.Services
                         RecognizedIntent?.Invoke(this, item);
                         break;
                     case "Temperature":
-                        item.MeasurementType = Intent.Temperature;
+                        item.MeasurementType = Measurement.Temperature;
                         dblValue = GetDoubleNumber(entities);
                         if (dblValue > 0)
                         {
-                            item.Measurement = dblValue;
+                            item.MeasuredValue = dblValue;
                         }
                         datePortion = GetDate(entities);
                         if (datePortion != DateTime.MinValue)
@@ -103,11 +110,11 @@ namespace HealthMate.Services
                         RecognizedIntent?.Invoke(this, item);
                         break;
                     case "Pulse":
-                        item.MeasurementType = Intent.Pulse;
+                        item.MeasurementType = Measurement.Pulse;
                         intValue = GetNumber(entities);
                         if (intValue > 0)
                         {
-                            item.Measurement = intValue;
+                            item.MeasuredValue = intValue;
                         }
                         datePortion = GetDate(entities);
                         if (datePortion != DateTime.MinValue)
@@ -119,11 +126,11 @@ namespace HealthMate.Services
                         RecognizedIntent?.Invoke(this, item);
                         break;
                     case "Glucose":
-                        item.MeasurementType = Intent.Glucose;
+                        item.MeasurementType = Measurement.Glucose;
                         intValue = GetNumber(entities);
                         if (intValue > 0)
                         {
-                            item.Measurement = intValue;
+                            item.MeasuredValue = intValue;
                         }
                         datePortion = GetDate(entities);
                         if (datePortion != DateTime.MinValue)
@@ -140,6 +147,7 @@ namespace HealthMate.Services
                     case "Utilities.Confirm":
                         ConfirmRecognized?.Invoke(this, EventArgs.Empty);
                         break;
+                    case "Calendar.CreateCalendarEntry":
                     case "DateTimeAck":
                         datePortion = GetDate(entities);
                         if (datePortion != DateTime.MinValue)
@@ -150,7 +158,8 @@ namespace HealthMate.Services
                         RecognizedIntent?.Invoke(this, item);
                         break;
                     default:
-                        item.MeasurementType = Intent.None;
+                        item.MeasurementType = Measurement.NotSet;
+                        NothingProcessableRecognized?.Invoke(this, e.Result.Text);
                         break;
                 }
             }
@@ -246,20 +255,23 @@ namespace HealthMate.Services
         {
             foreach (var entity in result)
             {
-                if (entity.type == "builtin.datetimeV2.date" || entity.type == "builtin.datetimeV2.datetime")
+                if (entity.type == "builtin.datetimeV2.date" || entity.type == "builtin.datetimeV2.datetime" || entity.type == "Calendar.StartDate")
                 {
                     string str;
-                    if (entity.resolution.values.Count > 0)
+                    if (entity.resolution?.values.Count > 0)
                     {
                         str = ((JObject)entity.resolution.values[0]).GetValue("timex").ToString();
                     }
                     else
                     {
-                        str = entity.resolution.value;
+                        str = entity.resolution?.value;
                     }
-                    str = str.Substring(0, 10);
-                    Debug.WriteLine($"Date Part: {str}");
-                    return DateTime.Parse(str.Substring(0, 10));
+                    if (!String.IsNullOrEmpty(str))
+                    {
+                        str = str.Substring(0, 10);
+                        Debug.WriteLine($"Date Part: {str}");
+                        return DateTime.Parse(str.Substring(0, 10));
+                    }
                 }
             }
             return DateTime.MinValue;
@@ -268,18 +280,18 @@ namespace HealthMate.Services
         {
             foreach (var entity in result)
             {
-                if (entity.type == "builtin.datetimeV2.date" || entity.type == "builtin.datetimeV2.datetime")
+                if (entity.type == "builtin.datetimeV2.date" || entity.type == "builtin.datetimeV2.datetime" || entity.type == "Calendar.StartTime")
                 {
                     string str;
-                    if (entity.resolution.values.Count > 0)
+                    if (entity.resolution?.values.Count > 0)
                     {
                         str = ((JObject)entity.resolution.values[0]).GetValue("timex").ToString();
                     }
                     else
                     {
-                        str = entity.resolution.value;
+                        str = entity.resolution?.value;
                     }
-                    if (str.Length > 11)
+                    if ((!String.IsNullOrEmpty(str)) && (str?.Length > 11))
                     {
                         str = str.Substring(11);
                         Debug.WriteLine($"Time Part: {str}");

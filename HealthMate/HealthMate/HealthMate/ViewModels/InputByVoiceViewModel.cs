@@ -14,8 +14,10 @@ namespace HealthMate.ViewModels
     {
         RecognitionService rc = new RecognitionService();
 
-        private MeasuredItem _inputItem = new MeasuredItem() { MeasurementType = Intent.None, MeasurementDateTime = DateTime.MinValue };
+        private MeasuredItem _inputItem = new MeasuredItem() { MeasurementType = Measurement.NotSet, MeasurementDateTime = DateTime.MinValue };
         public ObservableCollection<MessageDetailViewModel> Messages { get; }
+
+        private string WelcomeMessage = $"Hello. {Environment.NewLine}You can enter your heart rate, glucose or blood pressure by voice. {Environment.NewLine}For example, say  'My pulse was 73 at 9:30 am today.";
         public InputByVoiceViewModel()
         {
             Messages = new ObservableCollection<MessageDetailViewModel>();
@@ -28,6 +30,8 @@ namespace HealthMate.ViewModels
                     await rc.StopListening();
                     rc.RecognizedIntent -= Rc_Recognized;
                     rc.RecognizedText -= Rc_RecognizedText;
+                    rc.ConfirmRecognized -= Rc_ConfirmRecognized;
+                    rc.CancelRecognized -= Rc_CancelRecognized;
                     rc.NothingProcessableRecognized -= Rc_NothingProcessableRecognized;
                 }
                 else
@@ -46,12 +50,12 @@ namespace HealthMate.ViewModels
 
         private bool CheckNewItemComplete()
         {
-            if (_inputItem.MeasurementType == Intent.None)
+            if (_inputItem.MeasurementType == Measurement.NotSet)
                 return false;
             if (_inputItem.MeasurementDateTime == DateTime.MinValue)
                 return false;
 
-            if (_inputItem.MeasurementType == Intent.BloodPressure)
+            if (_inputItem.MeasurementType == Measurement.BloodPressure)
             {
                 if (_inputItem.SysValue == 0)
                     return false;
@@ -60,82 +64,63 @@ namespace HealthMate.ViewModels
             }
             else
             {
-                if (_inputItem.Measurement == 0)
+                if (_inputItem.MeasuredValue == 0)
                     return false;
             }
 
             // if we end up here every necessary field is filled
             return true;
         }
-        private void Rc_CancelRecognized(object sender, EventArgs e)
-        {
-            Device.BeginInvokeOnMainThread(() =>
-            {
-                Messages.Clear();
-                Messages.Add(new MessageDetailViewModel() { Sender = MessageSender.Server, Message = $"Hello. {Environment.NewLine} You can enter your heart rate, glucose or blood pressure by voice. {Environment.NewLine}For example, say  'My pulse was 73 at 9:30 am today." });
-            });
-        }
-
-        private void Rc_ConfirmRecognized(object sender, EventArgs e)
-        {
-            Device.BeginInvokeOnMainThread(async () =>
-            {
-                if (CheckNewItemComplete())
-                {
-                    Messages.Add(new MessageDetailViewModel() { Sender = MessageSender.Server, Message = $"Saving your data. {Environment.NewLine} Do you want to enter another measurment?" });
-                    await DataStore.AddItemAsync(_inputItem);
-                }
-
-            });
-        }
 
         // compare new info with already gathered info and ask for missing info
         private void EvaluateInoutAndIssueMessage(MeasuredItem item)
         {
             // Intent is the first thing we need
-            Debug.WriteLine($"Alt Intent: {_inputItem.MeasurementType} neuer {item.MeasurementType}");
-            Debug.WriteLine($"Alt Measurement: {_inputItem.Measurement} neuer {item.Measurement}");
-            Debug.WriteLine($"Alt Sys: {_inputItem.SysValue} neuer {item.SysValue}");
-            Debug.WriteLine($"Alt Dia: {_inputItem.DiaValue} neuer {item.DiaValue}");
-            Debug.WriteLine($"Alt Dateum: {_inputItem.MeasurementDateTime} neuer {item.MeasurementDateTime}");
-            if ((_inputItem.MeasurementType == Intent.None) && (item.MeasurementType == Intent.None))
+            Debug.WriteLine($"Intent: Old {_inputItem.MeasurementType} new {item.MeasurementType}");
+            Debug.WriteLine($"Old Measurement: Old {_inputItem.MeasurementDateTime} new {item.MeasuredValue}");
+            Debug.WriteLine($"Sys: Old {_inputItem.SysValue} new {item.SysValue}");
+            Debug.WriteLine($"Dia: Old {_inputItem.DiaValue} new {item.DiaValue}");
+            Debug.WriteLine($"Datum: Old {_inputItem.MeasurementDateTime} new {item.MeasurementDateTime}");
+            if ((_inputItem.MeasurementType == Measurement.NotSet) && (item.MeasurementType == Measurement.NotSet))
             {
                 Messages.Add(new MessageDetailViewModel() { Sender = MessageSender.Server, Message = "You have to tell me what you want to enter heart rate, blood pressure or glucose" });
                 return;
             }
 
-            if (item.MeasurementType != Intent.None)
+            if (item.MeasurementType != Measurement.NotSet)
             {
                 _inputItem.MeasurementType = item.MeasurementType;
             }
 
-            if (item.Measurement > 0)
+            if ((item.MeasuredValue > 0 ) && (_inputItem.MeasuredValue == 0))
             {
-                _inputItem.Measurement = item.Measurement;
+                Debug.WriteLine($"Set value to {item.MeasuredValue}");
+                _inputItem.MeasuredValue = item.MeasuredValue;
             }
 
-            if (item.SysValue > 0)
+            if ((item.SysValue > 0) && (_inputItem.SysValue == 0))
             {
+                Debug.WriteLine($"Set Sys value to {item.SysValue}");
                 _inputItem.SysValue = item.SysValue;
             }
-            if (item.DiaValue > 0)
+            if ((item.DiaValue > 0) && (_inputItem.DiaValue == 0))
             {
+                Debug.WriteLine($"Set Dia value to {item.DiaValue}");
                 _inputItem.DiaValue = item.DiaValue;
             }
 
-            if (item.MeasurementDateTime != DateTime.MinValue)
+            if ((item.MeasurementDateTime != DateTime.MinValue) && (_inputItem.MeasurementDateTime == DateTime.MinValue))
             {
                 _inputItem.MeasurementDateTime = item.MeasurementDateTime;
             }
 
-            if ((_inputItem.Measurement == 0) && item.MeasurementType != Intent.BloodPressure)
+            if ((_inputItem.MeasuredValue== 0) && _inputItem.MeasurementType != Measurement.BloodPressure)
             {
                 Messages.Add(new MessageDetailViewModel() { Sender = MessageSender.Server, Message = $"What was the value of your measurment?" });
                 return;
             }
 
-
-            if ((_inputItem.SysValue == 0) || (_inputItem.DiaValue == 0) && item.MeasurementType == Intent.BloodPressure)
+            if (((_inputItem.SysValue == 0) || (_inputItem.DiaValue == 0)) && _inputItem.MeasurementType == Measurement.BloodPressure)
             {
                 Messages.Add(new MessageDetailViewModel() { Sender = MessageSender.Server, Message = $"Tell me the systolic and diastolic pressure values" });
                 return;
@@ -147,16 +132,17 @@ namespace HealthMate.ViewModels
                 return;
             }
 
+
             if (CheckNewItemComplete())
             {
                 // when we finally end up down here we have everything and ask for confirmation to save the data
-                if (_inputItem.MeasurementType == Intent.BloodPressure)
+                if (_inputItem.MeasurementType == Measurement.BloodPressure)
                 {
                     Messages.Add(new MessageDetailViewModel() { Sender = MessageSender.Server, Message = $"Do you want to save blood pressure {_inputItem.SysValue} to {_inputItem.DiaValue} measured on {_inputItem.MeasurementDateTime}?" });
                 }
                 else
                 {
-                    Messages.Add(new MessageDetailViewModel() { Sender = MessageSender.Server, Message = $"Do you want to save value {_inputItem.Measurement} for {_inputItem.MeasurementType} measured on {_inputItem.MeasurementDateTime}?" });
+                    Messages.Add(new MessageDetailViewModel() { Sender = MessageSender.Server, Message = $"Do you want to save value {_inputItem.MeasuredValue} for {_inputItem.MeasurementType} measured on {_inputItem.MeasurementDateTime}?" });
                 }
             }
         }
@@ -165,6 +151,11 @@ namespace HealthMate.ViewModels
         {
             IsBusy = true;
             IsListening = true;
+            rc.RecognizedIntent -= Rc_Recognized;
+            rc.RecognizedText -= Rc_RecognizedText;
+            rc.ConfirmRecognized -= Rc_ConfirmRecognized;
+            rc.CancelRecognized -= Rc_CancelRecognized;
+            rc.NothingProcessableRecognized -= Rc_NothingProcessableRecognized;
             await rc.Init();
             rc.RecognizedIntent += Rc_Recognized;
             rc.RecognizedText += Rc_RecognizedText;
@@ -174,10 +165,35 @@ namespace HealthMate.ViewModels
             await rc.StartListening();
             ProcessingState = "I'm listening.";
             Messages.Clear();
-            Messages.Add(new MessageDetailViewModel() { Sender = MessageSender.Server, Message = $"Hello. {Environment.NewLine} You can enter your pulse, glucose or blood pressure by voice. {Environment.NewLine}For example, say  'My pulse was 73 at 9:30 am today." });
+            Messages.Add(new MessageDetailViewModel() { Sender = MessageSender.Server, Message = $"{WelcomeMessage}"});
 
             IsBusy = false;
         }
+
+        private void Rc_CancelRecognized(object sender, EventArgs e)
+        {
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                Messages.Clear();
+                _inputItem = new MeasuredItem();
+                Messages.Add(new MessageDetailViewModel() { Sender = MessageSender.Server, Message = $"{WelcomeMessage}" });
+            });
+        }
+
+        private void Rc_ConfirmRecognized(object sender, EventArgs e)
+        {
+            Device.BeginInvokeOnMainThread(async () =>
+            {
+                if (CheckNewItemComplete())
+                {
+                    await DataStore.AddItemAsync(_inputItem);
+                    Messages.Add(new MessageDetailViewModel() { Sender = MessageSender.Server, Message = $"I have saved your measurement. {Environment.NewLine}You can enter another measurment." });
+                    _inputItem = new MeasuredItem();
+                }
+
+            });
+        }
+
 
         private void Rc_NothingProcessableRecognized(object sender, string e)
         {
@@ -185,7 +201,7 @@ namespace HealthMate.ViewModels
             {
                 Device.BeginInvokeOnMainThread(() =>
                 {
-                    Messages.Add(new MessageDetailViewModel() { Sender = MessageSender.Server, Message = $"I'm sorry. I cannot handle what you said. {e}." });
+                    Messages.Add(new MessageDetailViewModel() { Sender = MessageSender.Server, Message = $"I'm sorry. I did not know what you mean by {e}" });
                 });
             }
         }
@@ -202,7 +218,7 @@ namespace HealthMate.ViewModels
         {
             Device.BeginInvokeOnMainThread(() =>
             {
-                Debug.WriteLine($"Something recognized {e.Measurement}");
+                Debug.WriteLine($"Something recognized {e.MeasuredValue} type {e.MeasurementType} date {e.MeasurementDateTime}");
                 EvaluateInoutAndIssueMessage(e);
             });
         }

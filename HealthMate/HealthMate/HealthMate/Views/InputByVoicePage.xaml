@@ -13,7 +13,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <CollectionView Grid.Row="0" ItemsUpdatingScrollMode="KeepLastItemInView"    
+        <CollectionView Grid.Row="0" ItemsUpdatingScrollMode="KeepLastItemInView" ItemSizingStrategy="MeasureAllItems"    
           CollectionView.ItemTemplate="{StaticResource ChatDataTemplateSelector}"
           ItemsSource="{Binding Messages, Mode=OneWay}">
         </CollectionView>
