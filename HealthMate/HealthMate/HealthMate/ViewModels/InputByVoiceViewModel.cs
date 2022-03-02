@@ -187,7 +187,7 @@ namespace HealthMate.ViewModels
                 if (CheckNewItemComplete())
                 {
                     await DataStore.AddItemAsync(_inputItem);
-                    Messages.Add(new MessageDetailViewModel() { Sender = MessageSender.Server, Message = $"I have saved your measurement. {Environment.NewLine}You can enter another measurment." });
+                    Messages.Add(new MessageDetailViewModel() { Sender = MessageSender.Server, Message = $"I have saved your measurement. {Environment.NewLine}I'm waiting for the next measurement. Or you just close the app." });
                     _inputItem = new MeasuredItem();
                 }
 

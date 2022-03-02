@@ -14,8 +14,13 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <CollectionView Grid.Row="0" ItemsUpdatingScrollMode="KeepLastItemInView" ItemSizingStrategy="MeasureAllItems"    
-          CollectionView.ItemTemplate="{StaticResource ChatDataTemplateSelector}"
-          ItemsSource="{Binding Messages, Mode=OneWay}">
+          CollectionView.ItemTemplate="{StaticResource ChatDataTemplateSelector}" VerticalScrollBarVisibility="Default" 
+          ItemsSource="{Binding Messages, Mode=OneWay}" >
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Vertical"
+                           SnapPointsType="MandatorySingle"
+                           SnapPointsAlignment="Start" />
+            </CollectionView.ItemsLayout>
         </CollectionView>
         <ImageButton Grid.Row="1" Command="{Binding ToggleMicCommand, Mode=OneWay}"  Source="{Binding IsListening, Converter={StaticResource StateToImageConverter}}" Margin="6" HeightRequest="56" WidthRequest="56" BackgroundColor="Transparent"/>
         <Label Grid.Row="2" Margin="0,0,0,6" Text= "{Binding ProcessingState, Mode=OneWay}" TextColor="{StaticResource Primary}" HorizontalOptions="Center"/>

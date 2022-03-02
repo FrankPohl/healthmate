@@ -22,6 +22,10 @@ namespace HealthMate.Services
         private bool isListening;
         public async Task Init()
         {
+            if (recognizer != null)
+            {
+                return;
+            }
             Debug.WriteLine("init start");
             SpeechConfig speechConfig = SpeechConfig.FromSubscription(Keys.LanguageUnderstandingSubscriptionKey, Keys.LanguageUnderstandingServiceRegion);
             speechConfig.SpeechRecognitionLanguage = "en-US";
@@ -260,7 +264,7 @@ namespace HealthMate.Services
                     string str;
                     if (entity.resolution?.values.Count > 0)
                     {
-                        str = ((JObject)entity.resolution.values[0]).GetValue("timex").ToString();
+                        str = ((JObject)entity.resolution.values[0]).GetValue("value").ToString();
                     }
                     else
                     {
@@ -285,7 +289,7 @@ namespace HealthMate.Services
                     string str;
                     if (entity.resolution?.values.Count > 0)
                     {
-                        str = ((JObject)entity.resolution.values[0]).GetValue("timex").ToString();
+                        str = ((JObject)entity.resolution.values[0]).GetValue("value").ToString();
                     }
                     else
                     {
