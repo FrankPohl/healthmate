@@ -1,0 +1,185 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+
+namespace HealthMate.Services
+{
+
+    public enum Commands
+    {
+        Undefined,
+        Show,
+        ShowList,
+        ShowChart,
+        Input,
+        InputWeight,
+        InputGlucose,
+        InputBloodPressure,
+        InputTemperature,
+        Pause,
+        Continue
+    }
+    public class TextEvaluation
+    {
+
+
+        public TextEvaluation()
+        {
+
+        }
+
+        private bool CheckForOneOfThePhrases()
+        {
+            return false;
+        }
+
+        // This is used to determine in which mode the user wants to be with his statement
+        public Commands GetCommandInText(string Text)
+        {
+
+            string evalString = Text.ToLower();
+            string[] exitCommandArray = { "continue", "go on", "weiter"};
+            if (exitCommandArray.Any(evalString.Contains))
+            {
+                return Commands.Continue;
+            }
+
+            string[] pauseCommandArray = { "pause", "wait", "warte" };
+            if (pauseCommandArray.Any(evalString.Contains))
+            {
+                return Commands.Pause;
+            }
+            string[] listArray = { "list", "table", "listen", "liste", "tabelle" };
+            if (listArray.Any(evalString.Contains))
+            {
+                return Commands.ShowList;
+            }
+            string[] chartArray = { "chart", "graph", "grafik" };
+            if (chartArray.Any(evalString.Contains))
+            {
+                return Commands.ShowChart;
+            }
+            string[] weightArray = { "weight", "weighing", "gewicht", "wiege"};
+            if (weightArray.Any(evalString.Contains))
+            {
+                return Commands.InputWeight;
+            }
+            string[] bloodPressureArray = { "pressure", "dia", "sys" };
+            if (bloodPressureArray.Any(evalString.Contains))
+            {
+                return Commands.InputBloodPressure;
+            }
+            string[] tempArray = { "temp" };
+            if (tempArray.Any(evalString.Contains))
+            {
+                return Commands.InputTemperature;
+            }
+            string[] glucoseArray = { "glucose", "sugar", "zucker" };
+            if (glucoseArray.Any(evalString.Contains))
+            {
+                return Commands.InputGlucose;
+            }
+            // check finally for an incomplete command
+            // must be done at the end
+            string[] inputArray = { "input", "enter", "put in", "eingabe" };
+            if (inputArray.Any(evalString.Contains))
+            {
+                return Commands.Input;
+            }
+            // final possibility if he wants to navigate in the app but do not knwo where
+            string[] showCommandArray = { "show", "open", "go", "öffnen", "gehe zu" };
+            if (showCommandArray.Any(evalString.Contains))
+            {
+                return Commands.Show;
+            }
+
+            return Commands.Undefined;
+        }
+
+        public double? GetFirstValue(string Text)
+        {
+            string pattern = @"\d{2,3}.?\d{0,1}";
+            RegexOptions options = RegexOptions.IgnoreCase;
+
+            var matches = Regex.Matches(Text, pattern, options);
+            if (matches.Count > 0)
+            {
+                return Convert.ToDouble(matches[0].Value);
+            }
+            else
+            {
+                return null;
+            }
+        }
+        public double? GetSecondValue(string Text)
+        {
+            string pattern = @"\d{2,3}.?\d{0,1}";
+            var matches = Regex.Matches(Text, pattern, RegexOptions.IgnoreCase);
+            if (matches.Count > 1)
+            {
+                return Convert.ToDouble(matches[1].Value);
+            }
+            else
+            {
+                return null;
+            }
+        }
+        public DateTime? GetTime(string Text)
+        {
+            string evalString = Text.ToLower();
+            string[] inputArray = { "now", "this moment", "jetzt" };
+            if (inputArray.Any(evalString.Contains))
+            {
+                return DateTime.Now;
+            }
+
+            string pattern = @"\d{1,2}:{1}\d\d";
+            var matches = Regex.Matches(Text, pattern, RegexOptions.IgnoreCase);
+            if (matches.Count > 0)
+            {
+                if (TimeSpan.TryParse(matches[0].Value, out var time))
+                {
+                    return DateTime.MinValue + time;
+                }
+            }
+			
+			pattern = @"\d{1,2} (?:vor|to) {1}\d{1,2}";
+            var matches = Regex.Matches(Text, pattern, RegexOptions.IgnoreCase);
+            if (matches.Count > 0)
+            {
+				var timeMatches = Regex.Matches(matches[0].Value, "\d{1,2}")[0];
+				hour = timeMatche[0];
+				time = timeMatche[1];
+                return DateTime.MinValue + time;
+            }
+			pattern = @"\d{1,2} (?:nach|past) {1}\d{1,2}";
+            var matches = Regex.Matches(Text, pattern, RegexOptions.IgnoreCase);
+            if (matches.Count > 0)
+            {
+				var timeMatches = Regex.Matches(matches[0].Value, "\d{1,2}")[0];
+				hour = timeMatche[0];
+				time = timeMatche[1];
+                    return DateTime.MinValue + time;
+            }
+            return null;
+        }
+        public DateTime? GetDateValue(string Text)
+        {
+            string evalString = Text.ToLower();
+            string[] inputArray = { "now", "this moment", "jetzt", "heute" };
+            if (inputArray.Any(evalString.Contains))
+            {
+                return DateTime.Now;
+            }
+            string[] dateInputArray = { "yesterday", "gestern"};
+            if (dateInputArray.Any(evalString.Contains))
+            {
+                return DateTime.Now.Subtract(new TimeSpan(1,0,0,0));
+            }
+            return null;
+        }
+    }
+}
